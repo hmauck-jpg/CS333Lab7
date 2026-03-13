@@ -6,8 +6,8 @@
 // this is the implementation file for the ASCIIlosaurus_client program
  
 //valgrind --leak-check=full --show-leak-kinds=all
- 
- 
+
+//./ASCIIlosaurus_client -H 127.0.0.1 -P 10011
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +20,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <ncurses.h>
+#include <fcntl.h>
 #include "ASCIIlosaurus_world.h"
 
  
@@ -42,6 +43,8 @@ int main(int argc, char * argv[]) {
     //contains destination IP, destination port, protocol family 
     struct sockaddr_in server; //server address struct
     int input; //key pressed by user
+    //TRY
+    int start;
 
     world_state_t world; //world state struct
     
@@ -81,6 +84,9 @@ int main(int argc, char * argv[]) {
     //create socket, attach to socket file descriptor 
     //call socket with domain: IPv4 networking, type: UDP, default protocol
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    //TRY
+    fcntl(sockfd, F_SETFL, O_NONBLOCK);
+
 
     if (sockfd < 0) {
         fprintf(stderr, "socket() failed\n");
@@ -106,6 +112,10 @@ int main(int argc, char * argv[]) {
     //start ncurses ui
     setup_ui();
 
+    start = ' ';
+    //TRY
+    sendto(sockfd, &start, sizeof(int), 0, (struct sockaddr *)&server, sizeof(server));
+   
 
     //start game loop
     while (run) {
@@ -114,26 +124,34 @@ int main(int argc, char * argv[]) {
         //returns key pressed
         //returns ERR if no key is pressed
         input = get_input();
-        NOISY_DEBUG_PRINT;
-
-
+        
         if(input != ERR) {
 
-            NOISY_DEBUG_PRINT;
+            
             //socket, data sent, message size, flags, destination, address size
             sendto(sockfd, &input, sizeof(int), 0, (struct sockaddr *)&server, sizeof(server));
-            
+             
             if (input == 'q') {
                 run = 0;
                 break;
             }
         }
         //read from, store data to, size, flags, address, address length
-        //recvfrom(sockfd, &world, sizeof(world), 0, NULL, NULL);
-        recvfrom(sockfd, &world, sizeof(world), MSG_DONTWAIT, NULL, NULL);
+        //recvfrom(sockfd, &world, sizeof(world), MSG_DONTWAIT, NULL, NULL);
+        if (recvfrom(sockfd, &world, sizeof(world), 0, NULL, NULL) > 0) {
+            NOISY_DEBUG_PRINT;
+            if (v) {
+                fprintf(stderr, "drawing world\n"); //debug
+                fprintf(stderr, "sent input: %d\n", input); //debug 
+            }
+           
+            draw_world(&world);
+        }
 
-        draw_world(&world);
+        //TRY
+        //usleep(20000);
 
+         
     }
 
     //teardown

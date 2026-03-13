@@ -6,8 +6,7 @@
 // this is the implementation file for the ASCIIlosaurus_server program
  
 //valgrind --leak-check=full --show-leak-kinds=all
-
-//./ASCIIlosaurus_client -H 127.0.0.1 -P 10011
+ 
  
 
 #include <stdio.h>
@@ -110,8 +109,9 @@ int main(int argc, char * argv[]) {
         NOISY_DEBUG_PRINT;
         recvfrom(sockfd, &ch, sizeof(int), 0, (struct sockaddr *)&client, &clientLen);
         NOISY_DEBUG_PRINT;
-        //debug
-        //printf("Received key: %c from %s:%d\n", ch, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
+        if (v) {
+            fprintf(stderr,"Received key: %c from %s:%d\n", ch, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
+        }
 
 
         playerIndex = -1;

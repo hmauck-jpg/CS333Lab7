@@ -1,6 +1,6 @@
 CC = gcc
 DEBUG = -g
-DEFINES = -DNOISY_DEBUG
+DEFINES = 
 LDFLAGS = -lncurses
 DEPENDS = ASCIIlosaurus_world.h  
 CFLAGS = $(DEBUG) -Wall -Wextra -Wshadow -Wunreachable-code \
