@@ -1,7 +1,8 @@
 CC = gcc
 DEBUG = -g
-DEFINES = 
-DEPENDS = ASCIIlosaurus_world.h
+DEFINES = -DNOISY_DEBUG
+LDFLAGS = -lncurses
+DEPENDS = ASCIIlosaurus_world.h  
 CFLAGS = $(DEBUG) -Wall -Wextra -Wshadow -Wunreachable-code \
 	-Wredundant-decls -Wmissing-declarations \
 	-Wold-style-definition -Wmissing-prototypes \
@@ -15,13 +16,13 @@ PROG3 = ASCIIlosaurus_world
 all: $(PROG1) $(PROG2)
 
 $(PROG1): $(PROG1).o  
-	$(CC) $(CFLAGS) -o $@ $^  
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(PROG1).o: $(PROG1).c $(DEPENDS)
 	$(CC) $(CFLAGS) -c $< 
 
 $(PROG2): $(PROG2).o $(PROG3).o
-	$(CC) $(CFLAGS) -o $@ $^  
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(PROG2).o: $(PROG2).c $(DEPENDS)
 	$(CC) $(CFLAGS) -c $< 
