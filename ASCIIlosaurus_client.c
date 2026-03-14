@@ -7,7 +7,7 @@
  
 //valgrind --leak-check=full --show-leak-kinds=all
 
-//./ASCIIlosaurus_client -H 127.0.0.1 -P 10011q
+//./ASCIIlosaurus_client -H 127.0.0.1 -P 10011
 
 #include <stdio.h>
 #include <stdlib.h>
